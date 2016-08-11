@@ -1,372 +1,312 @@
-# calculateAndSetNewPosition = (start, element) ->
-#   newTopPosition = start - $(window).scrollTop()
-#   if newTopPosition < 0
-#     newTopPosition = 0
-#   $(element).css('top', newTopPosition)
 #
-# $.fn.affix = () ->
-#   $(this).each (idx, ele) ->
-#     startingTopPosition = $(ele).position().top
-#     calculateAndSetNewPosition(startingTopPosition, ele)
-#     $(window).on 'scroll', () ->
-#       calculateAndSetNewPosition(startingTopPosition, ele)
-
-###!
-# Stickyfill -- `position: sticky` polyfill
-# v. 1.1.4 | https://github.com/wilddeer/stickyfill
-# Copyright Oleg Korsunsky | http://wd.dizaina.net/
+# Affix - A Polyfill for Sticky Positioning (i.e. `position: sticky`)
 #
-# MIT License
-###
+# Atttempts to emulate sticky positioning in user agents that do not yet support
+# the specification. For user agents that do support `position: sticky`, calling
+# affix on the element will make the element sticky positioned if it has not
+# already been styled that way.
+#
+# Originally based on Stickyfill (https://github.com/wilddeer/stickyfill), but
+# has been completely reimplemented in CoffeeScript and jQuery.
+#
+class Affix
 
-((window) ->
-  watchArray = []
-  scroll = undefined
-  initialized = false
+  element: undefined
+  clonedElement: undefined
+  parentElement: undefined
 
-  # noop = ->
+  state: undefined
+  currentScrollPosition: {}
+  currentMode: undefined
+  checkTimer: undefined
 
-  checkTimer = undefined
-  hiddenPropertyName = 'hidden'
-  visibilityChangeEventName = 'visibilitychange'
-  #fallback to prefixed names in old webkit browsers
-  #commit seppuku!
-  # seppuku = ->
-  #   init = add = rebuild = pause = stop = kill = noop
-  #   return
+  isEnabled: false
 
-  parseNumeric = (val) ->
+  # ----------------------------------------------------------------------------
+
+  constructor: (element) ->
+
+    #
+    # Don't attempt to initialize the polyfill if the browser supports sticky
+    # positioning natively.
+    #
+    # TODO: Perhaps we should set position: sticky on these elements if they
+    #       are being called for affix but aren't sticky positioned?
+    #
+    if @isSupportedNatively()
+      console.info('Skipping Affix Polyfill')
+      return
+    else
+      console.info('Affix Polyfill')
+
+    #
+    # Validate the the element that is being affixed is actually capable of
+    # being affixed.
+    #
+    return unless @validateElement(element)
+
+    @updateCurrentScrollPosition()
+
+    @element = element
+    @parentElement = ($ element).parent()[0]
+    # console.log('parentElement', @parentElement)
+
+    # TODO: Nuke.
+    @state = @getElementParams()
+
+    @enable()
+
+  #
+  # Validates that the passed element is able to be affixed. Returns true or
+  # false.
+  #
+  validateElement: (element) ->
+
+    #
+    # Affix is not compatible with table cells, so don't even try to affix it.
+    #
+    if element.style.display == 'table-cell'
+      console.error('Affix is not compatible with table cells!')
+      return false
+
+    #
+    # TODO: Ensure that the element is not already affixed.
+    #
+    # return if @element
+
+    #
+    # TODO: Ensure that the element is visible.
+    #
+    # if isNaN(parseFloat(@state.computed.top)) or @state.computed.display == 'none'
+    #   return
+
+    true
+
+  #
+  # Enables the element for affixing.
+  #
+  enable: ->
+    @isEnabled = true
+    @clone() unless @clonedElement
+
+    #
+    # Ensure that the parent element is either positioned absolutely or
+    # relatively. If not, set the parent element to relative positioning.
+    #
+    parentElementPosition = ($ @parentElement).css('position')
+    unless parentElementPosition == 'absolute' or parentElementPosition == 'relative'
+      ($ @parentElement).css('position', 'relative')
+
+    @recalculateElementPosition()
+    @state.parent.height = @parentElement.offsetHeight
+    @addObservers()
+    @startFastCheckTimer()
+
+  #
+  # Disables affixing on the element by removing the observers, relevant styles
+  # and the cloned element.
+  #
+  disable: ->
+    @removeObservers()
+    @stopFastCheckTimer()
+    @removeClone()
+    $.extend(@element.style, @state.css)
+    @currentMode = -1
+    @isEnabled = false
+
+  reset: =>
+    @disable()
+    @state = @getElementParams()
+    @enable()
+
+  # Events & Event Handlers ----------------------------------------------------
+
+  addObservers: ->
+    $(window).on('scroll', @handleScrollEvents)
+    $(window).on('resize orientationchange', @reset)
+    $(document).on('visibilitychange', @handlePageVisibilityChange)
+
+  removeObservers: ->
+    $(window).off('scroll', @handleScrollEvents)
+    $(window).off('resize orientationchange', @reset)
+    $(document).off('visibilitychange', @handlePageVisibilityChange)
+
+  handleScrollEvents: =>
+    if window.pageXOffset != @currentScrollPosition.left
+      @updateCurrentScrollPosition()
+      @reset()
+    if window.pageYOffset != @currentScrollPosition.top
+      @updateCurrentScrollPosition()
+      @recalculateElementPosition()
+
+  handlePageVisibilityChange: =>
+    if document.hidden
+      @stopFastCheckTimer()
+    else
+      @startFastCheckTimer()
+
+  # ----------------------------------------------------------------------------
+
+  parseNumeric: (val) ->
     parseFloat(val) or 0
 
-  updateScrollPos = ->
-    scroll =
+  updateCurrentScrollPosition: ->
+    @currentScrollPosition =
       top: window.pageYOffset
       left: window.pageXOffset
 
-  onScroll = ->
-    if window.pageXOffset != scroll.left
-      updateScrollPos()
-      rebuild()
-    if window.pageYOffset != scroll.top
-      updateScrollPos()
-      recalcAllPos()
-
-  #fixes flickering
-
-  onWheel = (event) ->
-    setTimeout (->
-      if window.pageYOffset != scroll.top
-        scroll.top = window.pageYOffset
-        recalcAllPos()
-      return
-    ), 0
-
-  recalcAllPos = ->
-    for watchedItem in watchArray
-      recalcElementPos watchedItem
-
-  recalcElementPos = (el) ->
-    if !el.inited
-      return
-    currentMode = if scroll.top <= el.limit.start then 0 else if scroll.top >= el.limit.end then 2 else 1
-    if el.mode != currentMode
-      switchElementMode el, currentMode
+  recalculateElementPosition: ->
+    return unless @isEnabled
+    newMode = if @currentScrollPosition.top <= @state.limit.start
+      0
+    else if @currentScrollPosition.top >= @state.limit.end
+      2
+    else
+      1
+    if @currentMode != newMode
+      @switchElementMode(newMode)
 
   #checks whether stickies start or stop positions have changed
 
-  fastCheck = ->
-    for watchedItem in watchArray
-      continue if watchedItem.inited
-      deltaTop = Math.abs(getDocOffsetTop(watchedItem.clone) - watchedItem.docOffsetTop)
-      deltaHeight = Math.abs(watchedItem.parent.node.offsetHeight - watchedItem.parent.height)
-      if deltaTop >= 2 or deltaHeight >= 2
-        return false
+  fastCheck: ->
+    deltaTop = Math.abs(($ @clonedElement).offset().top - ($ @element).offset().top)
+    deltaHeight = Math.abs(@parentElement.offsetHeight - @state.parent.height)
+    return false if deltaTop >= 2 or deltaHeight >= 2
     true
 
-  initElement = (el) ->
-    if isNaN(parseFloat(el.computed.top)) or el.isCell or el.computed.display == 'none'
-      return
-    el.inited = true
-    if !el.clone
-      clone el
-    if el.parent.computed.position != 'absolute' and el.parent.computed.position != 'relative'
-      el.parent.node.style.position = 'relative'
-    recalcElementPos el
-    el.parent.height = el.parent.node.offsetHeight
-    el.docOffsetTop = getDocOffsetTop(el.clone)
+  startFastCheckTimer: ->
+    @checkTimer = setInterval((=>
+      !@fastCheck() and @reset()
+    ), 500)
 
-  deinitElement = (el) ->
-    deinitParent = true
-    el.clone and killClone(el)
-    $.extend(el.node.style, el.css)
-    #check whether element's parent is used by other stickies
-    for watchedItem in watchArray
-      if watchedItem.node != el.node and watchedItem.parent.node == el.parent.node
-        deinitParent = false
-        break
-    if deinitParent
-      el.parent.node.style.position = el.parent.css.position
-    el.mode = -1
+  stopFastCheckTimer: ->
+    clearInterval(@checkTimer)
 
-  initAll = ->
-    for watchedItem in watchArray
-      initElement watchedItem
-
-  deinitAll = ->
-    for watchedItem in watchArray
-      deinitElement watchedItem[i]
-
-  switchElementMode = (el, mode) ->
-    nodeStyle = el.node.style
-    switch mode
+  switchElementMode: (newMode) ->
+    switch newMode
       when 0
-        nodeStyle.position = 'absolute'
-        nodeStyle.left = el.offset.left + 'px'
-        nodeStyle.right = el.offset.right + 'px'
-        nodeStyle.top = el.offset.top + 'px'
-        nodeStyle.bottom = 'auto'
-        nodeStyle.width = 'auto'
-        nodeStyle.marginLeft = 0
-        nodeStyle.marginRight = 0
-        nodeStyle.marginTop = 0
+        ($ @element).css
+          position: 'absolute'
+          left: "#{@state.offset.left}px"
+          right: "#{@state.offset.right}px"
+          top: "#{@state.offset.top}px"
+          bottom: 'auto'
+          width: 'auto'
+          marginLeft: 0
+          marginRight: 0
+          marginTop: 0
       when 1
-        nodeStyle.position = 'fixed'
-        nodeStyle.left = el.box.left + 'px'
-        nodeStyle.right = el.box.right + 'px'
-        nodeStyle.top = el.css.top
-        nodeStyle.bottom = 'auto'
-        nodeStyle.width = 'auto'
-        nodeStyle.marginLeft = 0
-        nodeStyle.marginRight = 0
-        nodeStyle.marginTop = 0
+        # console.log('1', "#{@state.box.right}px", ($ @element).css('right'), ($ @element).css('top'))
+        ($ @element).css
+          position: 'fixed'
+          left: "#{@state.box.left}px"
+          right: "#{@state.box.right}px"
+          top: ($ @element).css('top')
+          bottom: 'auto'
+          width: 'auto'
+          marginLeft: 0
+          marginRight: 0
+          marginTop: 0
+
       when 2
-        nodeStyle.position = 'absolute'
-        nodeStyle.left = el.offset.left + 'px'
-        nodeStyle.right = el.offset.right + 'px'
-        nodeStyle.top = 'auto'
-        nodeStyle.bottom = 0
-        nodeStyle.width = 'auto'
-        nodeStyle.marginLeft = 0
-        nodeStyle.marginRight = 0
-    el.mode = mode
+        ($ @element).css
+          position: 'absolute'
+          left: "#{@state.offset.left}px"
+          right: "#{@state.offset.right}px"
+          top: 'auto'
+          bottom: 0
+          width: 'auto'
+          marginLeft: 0
+          marginRight: 0
+    @currentMode = newMode
 
-  clone = (el) ->
-    el.clone = window.document.createElement('div')
-    refElement = el.node.nextSibling or el.node
-    cloneStyle = el.clone.style
-    cloneStyle.height = el.height + 'px'
-    cloneStyle.width = el.width + 'px'
-    cloneStyle.marginTop = el.computed.marginTop
-    cloneStyle.marginBottom = el.computed.marginBottom
-    cloneStyle.marginLeft = el.computed.marginLeft
-    cloneStyle.marginRight = el.computed.marginRight
-    cloneStyle.padding = cloneStyle.border = cloneStyle.borderSpacing = 0
-    # cloneStyle.fontSize = '1em'
-    cloneStyle.position = 'static'
-    cloneStyle.cssFloat = el.computed.cssFloat
-    el.node.parentNode.insertBefore el.clone, refElement
+  clone: ->
+    @clonedElement = document.createElement('div')
+    ($ @clonedElement).css
+      height: @state.height + 'px'
+      width: @state.width + 'px'
+      marginTop: ($ @element).css('marginTop')
+      marginBottom: ($ @element).css('marginBottom')
+      marginLeft: ($ @element).css('marginLeft')
+      marginRight: ($ @element).css('marginRight')
+      padding: 0
+      border: 0
+      borderSpacing: 0
+      position: 'static'
+      float: ($ @element).css('float')
+    ($ @clonedElement).insertBefore(@element.nextSibling or @element)
 
-  killClone = (el) ->
-    el.clone.parentNode.removeChild el.clone
-    el.clone = undefined
+  removeClone: ->
+    return unless @clonedElement
+    ($ @clonedElement).remove()
+    @clonedElement = undefined
 
-  getElementParams = (node) ->
-    computedStyle = getComputedStyle(node)
-    parentNode = node.parentNode
-    parentComputedStyle = getComputedStyle(parentNode)
-    cachedPosition = node.style.position
-    node.style.position = 'relative'
-    computed =
-      top: computedStyle.top
-      marginTop: computedStyle.marginTop
-      marginBottom: computedStyle.marginBottom
-      marginLeft: computedStyle.marginLeft
-      marginRight: computedStyle.marginRight
-      cssFloat: computedStyle.cssFloat
-      display: computedStyle.display
+  getElementParams: ->
     numeric =
-      top: parseNumeric(computedStyle.top)
-      marginBottom: parseNumeric(computedStyle.marginBottom)
-      paddingLeft: parseNumeric(computedStyle.paddingLeft)
-      paddingRight: parseNumeric(computedStyle.paddingRight)
-      borderLeftWidth: parseNumeric(computedStyle.borderLeftWidth)
-      borderRightWidth: parseNumeric(computedStyle.borderRightWidth)
-    node.style.position = cachedPosition
+      top: @parseNumeric(($ @element).css('top'))
+      marginBottom: @parseNumeric(($ @element).css('marginBottom'))
+      paddingLeft: @parseNumeric(($ @element).css('paddingLeft'))
+      paddingRight: @parseNumeric(($ @element).css('paddingRight'))
+      borderLeftWidth: @parseNumeric(($ @element).css('borderLeftWidth'))
+      borderRightWidth: @parseNumeric(($ @element).css('borderRightWidth'))
+
     css =
-      position: node.style.position
-      top: node.style.top
-      bottom: node.style.bottom
-      left: node.style.left
-      right: node.style.right
-      width: node.style.width
-      marginTop: node.style.marginTop
-      marginLeft: node.style.marginLeft
-      marginRight: node.style.marginRight
-    nodeOffset = getElementOffset(node)
-    parentOffset = getElementOffset(parentNode)
+      position: @element.style.position
+      top: @element.style.top
+      bottom: @element.style.bottom
+      left: @element.style.left
+      right: @element.style.right
+      width: @element.style.width
+      marginTop: @element.style.marginTop
+      marginLeft: @element.style.marginLeft
+      marginRight: @element.style.marginRight
+
+    nodeOffset = @getElementOffset(@element)
+    parentOffset = @getElementOffset(@parentElement)
+
     parent =
-      node: parentNode
-      css: position: parentNode.style.position
-      computed: position: parentComputedStyle.position
       numeric:
-        borderLeftWidth: parseNumeric(parentComputedStyle.borderLeftWidth)
-        borderRightWidth: parseNumeric(parentComputedStyle.borderRightWidth)
-        borderTopWidth: parseNumeric(parentComputedStyle.borderTopWidth)
-        borderBottomWidth: parseNumeric(parentComputedStyle.borderBottomWidth)
+        borderLeftWidth: @parseNumeric(($ @parentElement).css('borderLeftWidth'))
+        borderRightWidth: @parseNumeric(($ @parentElement).css('borderRightWidth'))
+        borderTopWidth: @parseNumeric(($ @parentElement).css('borderTopWidth'))
+        borderBottomWidth: @parseNumeric(($ @parentElement).css('borderBottomWidth'))
+
     el =
-      node: node
       box:
         left: nodeOffset.win.left
-        right: window.document.documentElement.clientWidth - (nodeOffset.win.right)
+        right: document.documentElement.clientWidth - (nodeOffset.win.right)
       offset:
         top: nodeOffset.win.top - (parentOffset.win.top) - (parent.numeric.borderTopWidth)
         left: nodeOffset.win.left - (parentOffset.win.left) - (parent.numeric.borderLeftWidth)
         right: -nodeOffset.win.right + parentOffset.win.right - (parent.numeric.borderRightWidth)
       css: css
-      isCell: computedStyle.display == 'table-cell'
-      computed: computed
       numeric: numeric
       width: nodeOffset.win.right - (nodeOffset.win.left)
       height: nodeOffset.win.bottom - (nodeOffset.win.top)
-      mode: -1
-      inited: false
       parent: parent
       limit:
         start: nodeOffset.doc.top - (numeric.top)
-        end: parentOffset.doc.top + parentNode.offsetHeight - (parent.numeric.borderBottomWidth) - (node.offsetHeight) - (numeric.top) - (numeric.marginBottom)
-    el
+        end: parentOffset.doc.top + @parentElement.offsetHeight - (parent.numeric.borderBottomWidth) - (@element.offsetHeight) - (numeric.top) - (numeric.marginBottom)
 
-  getDocOffsetTop = (node) ->
-    $(node).offset().top
-
-  getElementOffset = (node) ->
+  getElementOffset: (node) ->
     doc: $(node).offset()
     win: node.getBoundingClientRect()
 
-  startFastCheckTimer = ->
-    checkTimer = setInterval((->
-      !fastCheck() and rebuild()
-    ), 500)
-
-  stopFastCheckTimer = ->
-    clearInterval checkTimer
-
-  handlePageVisibilityChange = ->
-    return unless initialized
-    if window.document[hiddenPropertyName]
-      stopFastCheckTimer()
-    else
-      startFastCheckTimer()
-
-  init = ->
-    return if initialized
-    updateScrollPos()
-    initAll()
-    window.addEventListener 'scroll', onScroll
-    window.addEventListener 'wheel', onWheel
-    #watch for width changes
-    window.addEventListener 'resize', rebuild
-    window.addEventListener 'orientationchange', rebuild
-    #watch for page visibility
-    window.document.addEventListener visibilityChangeEventName, handlePageVisibilityChange
-    startFastCheckTimer()
-    initialized = true
-
-  rebuild = ->
-    return unless initialized
-    deinitAll()
-    for watchedItem in watchArray
-      watchedItem = getElementParams(watchedItem.node)
-    initAll()
-
-  pause = ->
-    window.removeEventListener 'scroll', onScroll
-    window.removeEventListener 'wheel', onWheel
-    window.removeEventListener 'resize', rebuild
-    window.removeEventListener 'orientationchange', rebuild
-    window.document.removeEventListener visibilityChangeEventName, handlePageVisibilityChange
-    stopFastCheckTimer()
-    initialized = false
-
-  stop = ->
-    pause()
-    deinitAll()
-
-  kill = ->
-    stop()
-    #empty the array without loosing the references,
-    #the most performant method according to http://jsperf.com/empty-javascript-array
-    while watchArray.length
-      watchArray.pop()
-
-  add = (node) ->
-    #check if Stickyfill is already applied to the node
-    for watchedItem in watchArray
-      return if watchedItem.node == node
-    el = getElementParams(node)
-    watchArray.push el
-    if initialized
-      initElement el
-    else
-      init()
-
-  remove = (node) ->
-    i = watchArray.length - 1
-    while i >= 0
-      if watchArray[i].node == node
-        deinitElement watchArray[i]
-        watchArray.splice i, 1
-      i--
-
-  if window.document.webkitHidden != undefined
-    hiddenPropertyName = 'webkitHidden'
-    visibilityChangeEventName = 'webkitvisibilitychange'
-
   #
-  # Tests for native "position: sticky" support.
+  # Tests for native "position: sticky" support. Returns true if the browser
+  # supports "position: sticky" and false for all other browsers.
   #
-  isSupportedNatively = ->
-    testElement = window.document.createElement('div')
+  isSupportedNatively: ->
+    testElement = document.createElement('test')
     for prefix in [ '', '-webkit-', '-moz-', '-ms-' ]
       testElement.style.position = prefix + 'sticky'
-      testElement.style.position
-      # try
-      #   testElement.style.position = prefix + 'sticky'
-      # catch e
-      #   console.log(e)
-      #   return false
-    # true
+      return true if testElement.style.position.indexOf('sticky') != -1
+    false
 
-
-  console.log('isSupportedNatively?', isSupportedNatively())
-
-  updateScrollPos()
-
-  #expose Stickyfill
-  window.Stickyfill =
-    stickies: watchArray
-    add: add
-    remove: remove
-    init: init
-    rebuild: rebuild
-    pause: pause
-    stop: stop
-    kill: kill
-) window
-
-#if jQuery is available -- create a plugin
-if window.jQuery
-  (($) ->
-
-    $.fn.Stickyfill = (options) ->
-      @each ->
-        Stickyfill.add this
-      #   return
-      # this
-
-    # $.fn.affix = () ->
-    #   @each ->
-    #     Stickyfill.add this
-    #   #   return
-    #   # this
-  ) window.jQuery
+#
+# Create a jQuery function for affix.
+#
+$.fn.affix = () ->
+  instances = []
+  this.each (idx, element) ->
+    instances.push new Affix(element)
