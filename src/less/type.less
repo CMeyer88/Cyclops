@@ -13,7 +13,7 @@ h6,
 .h4,
 .h5,
 .h6 {
-  font-weight: @font-weight-regular;
+  font-weight: @font-weight-bold;
   color: @heading-text-color;
   line-height: @headings-line-height;
 
@@ -171,7 +171,7 @@ body {
 }
 
 a {
-  color: @text-color;
+  color: @link-color;
 
   &.underline {
     text-decoration: underline;
@@ -198,12 +198,37 @@ p {
 .large-type-feature {
   margin-top: 50px;
   h1 {
-    font-size: 100px;
-    color: @gray-600;
+    font-size: 40px;
+    color: @gray-400;
     font-weight: @font-weight-bold;
     margin-bottom: 0;
   }
   .lead {
     margin-bottom: @line-height-computed;
   }
+
+  @media (min-width: @screen-sm-min) {
+    h1 {
+      font-size: 60px;
+    }
+  }
+
+  @media (min-width: @screen-md-min) {
+    h1 {
+      font-size: 80px;
+    }
+  }
+
+  @media (min-width: @screen-lg-min) {
+    h1 {
+      font-size: 100px;
+    }
+  }
+
+  @media (min-width: @screen-xl-min) {
+    h1 {
+      font-size: 100px;
+    }
+  }
+
 }

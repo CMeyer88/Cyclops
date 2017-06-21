@@ -58,7 +58,7 @@
 // -------------------------
 @padding-base-vertical:       7px;
 //** Global textual link color.
-@link-color:                  @primary-brand-green;
+@link-color:                  @text-color;
 @link-hover-color:            darken(@link-color, 15%);
 //** Link hover decoration.
 @link-hover-decoration:       underline;
@@ -76,53 +76,72 @@
 // -------------------------
 // grayscale and brand colors used throughout the site.
 
-@primary-brand-green:         #00853f;
-@bright-green:                #8cc63f;
-@body-bg:                     #f2f2f2;
+@primary-brand-green:         #3CAC30;
+@bright-green:                #3CAC30;
+@body-bg:                     #f8f8f8; // @layout6
 @primary-body-bg:             #fff;
 
 @brand-success:               #3cac30;
 @brand-info:                  #43c1e6;
-@brand-warning:               #f5a934;
+@brand-warning:               #FDB630;
 @brand-danger:                #e43b34;
-@orange:                      #f5a934;
+@orange:                      #FDB630;
 
-@gray-100:                    #e0e0e0;
-@gray-200:                    #c1c1c1;
-@gray-300:                    #a3a3a3;
-@gray-400:                    #848484;
-@gray-500:                    #666;
-@gray-600:                    #515151;
-@gray-700:                    #3d3d3d;
-@gray-800:                    #282828;
-@gray-900:                    #141414;
-@black:                       #000;
 
-@border-color:                @gray-100;
-@border-color-dark:           @gray-200;
+@gray-25:					  #fafafa; // @layout5
+@gray-50:					  #f8f8f8; // @layout4
+@gray-75:					  #eeeeee; // @layout3
+@gray-100:                    #e0e0e0; // @layout2
+@gray-150:                    #d5d5d5; // @layout1
+@gray-200:                    #999;
+@gray-400:                    #757575;
+@black:                       #333;
+@gray-500:					  #252525;
+@gray-1000: 		  		  #000;
 
 //-- Z-index master list
 // -------------------------
 @zindex-navbar:               1000;
-@zindex-main-nav:             1;
+@zindex-services-menu:        900;
+@zindex-main-nav:             100;
+@zindex-nav-local-persistent: 99;
+@zindex-sticky-content:       10;
+@zindex-slider:               1;
+@zindex-slider-track-click:   2;
+@zindex-slider-handle2:       3;
 @zindex-tooltip:              1070;
+@zindex-account-switcher:     1051;
+@zindex-account-takeover:     1050;
 @zindex-navbar-fixed:         1030;
 
 //== Typography
 // -------------------------
 
-@text-color:                  @gray-500;
+@text-color:                  @black;
 @text-color-light:            @gray-400;
-@text-color-lighter:          @gray-300;
+@text-color-lighter:          @gray-200;
 @text-color-error:            @brand-danger;
 
 @font-weight-light:           300;
 @font-weight-regular:         400;
 @font-weight-bold:            600;
-@font-family:                 "Open Sans", Helvetica, Arial, Sans-Serif;
+
+@font-family:                 "Open Sans",
+                              -apple-system,
+                              BlinkMacSystemFont,
+                              "Segoe UI",
+                              "Roboto",
+                              "Oxygen",
+                              "Ubuntu",
+                              "Cantarell",
+                              "Fira Sans",
+                              "Droid Sans",
+                              "Helvetica Neue",
+                              Sans-Serif;
+
 @mono-font-family:            Menlo, Monaco, Consolas, "Courier New", monospace;
 
-@font-size-regular:              14px;
+@font-size-regular:           14px;
 @font-size-large:             ceil((@font-size-regular * 1.25)); // ~18px
 @font-size-small:             ceil((@font-size-regular * 0.85)); // ~12px
 @font-size-h1:                floor((@font-size-regular * 2.6)); // ~36px
@@ -132,8 +151,8 @@
 @font-size-h5:                ceil((@font-size-regular * 0.9)); // ~13px
 @font-size-h6:                ceil((@font-size-regular * 0.85)); // ~12px
 
-@heading-text-color:          @gray-800;
-@headings-small-color:        @gray-300;
+@heading-text-color:          @black;
+@headings-small-color:        @gray-200;
 @headings-line-height:        1.2em;
 
 // Common Components
@@ -142,6 +161,15 @@
 @line-height-base:            1.428571429; // 20/14
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 @line-height-computed:        floor((@font-size-regular * @line-height-base)); // ~20px
+
+// Borders
+//-------------------------
+@border-color:                @gray-100;
+@border-color-dark:           @gray-200;
+@border-width-0:              0;
+@border-width-1:              1px;
+@border-width-2:              2px;
+@border-width-3:              3px;
 
 // Border Radius
 //-------------------------
@@ -152,38 +180,31 @@
 
 // Buttons
 //-------------------------
-@btn-default-color:           #fff;
-@btn-default-bg:              @gray-400;
-@btn-default-bg-hover:        @gray-500;
-@btn-default-bg-active:       @gray-600;
-@btn-default-bg-disabled:     @gray-300;
+@btn-default-color:           @black;
+@btn-default-bg:              #fff;
+@btn-default-border:          @gray-150;
 
-@btn-primary-color:           @btn-default-color;
+@btn-primary-color:           #fff;
 @btn-primary-bg:              @brand-success;
-@btn-primary-bg-hover:        #369a2b;
-@btn-primary-bg-active:       #308a26;
-@btn-primary-bg-disabled:     #9ad493;
 
-@btn-danger-color:            @btn-default-color;
+@btn-danger-color:            #fff;
 @btn-danger-bg:               @brand-danger;
-@btn-danger-bg-hover:         #c2322c;
-@btn-danger-bg-active:        #9f2924;
-@btn-danger-bg-disabled:      #e9625c;
 
-@btn-inverse-color:           @gray-700;
-@btn-inverse-color-disabled:  @gray-400;
+@btn-warning-color:           @btn-default-color;
+@btn-warning-bg:              @brand-warning;
+
+@btn-inverse-color:           @black;
 @btn-inverse-bg:              @gray-100;
-@btn-inverse-bg-hover:        lighten(@gray-100, 5%);
-@btn-inverse-bg-active:       @btn-inverse-bg-hover;
-@btn-inverse-bg-disabled:     @btn-inverse-bg;
 
-@btn-outline-color:           @gray-700;
-@btn-outline-color-disabled:  @btn-inverse-color-disabled;
-@btn-outline-border:          @gray-200;
-@btn-outline-bg:              #f5f5f5;
-@btn-outline-bg-hover:        @gray-400;
-@btn-outline-bg-active:       @btn-outline-bg-hover;
-@btn-outline-bg-disabled:     @btn-outline-bg;
+@btn-outline-color:           @black;
+@btn-outline-border:          @gray-150;
+@btn-outline-bg:              #fff;
+
+@btn-icon-size-sm:            14px;
+@btn-icon-size-default:       21px;
+@btn-icon-size-lg:            30px;
+
+@btn-hover-darken-percentage: 3%;
 
 // Code
 //-------------------------
@@ -194,7 +215,7 @@
 //-------------------------
 @input-height-base:           34px;
 @form-group-margin-bottom:    15px;
-@input-bg-disabled:           @gray-100;
+@input-bg-disabled:           @gray-75;
 //** Disabled cursor for form controls and buttons.
 @cursor-disabled:             not-allowed;
 //== Form states and alerts
@@ -208,26 +229,28 @@
 @state-info-border:           darken(spin(@state-info-bg, -10), 10%); // #afe4ee
 @state-warning-text:          @brand-warning;
 @state-warning-bg:            #fcf8e3;
-@state-warning-border:        darken(spin(@state-warning-bg, -10), 10%); // #f7e1b5
+@state-warning-border:        #f5d9a5;
 @state-danger-text:           @text-color-error;
 @state-danger-bg:             #f2dede;
 @state-danger-border:         darken(spin(@state-danger-bg, -10), 5%); // #ebccd1
 
 //== Account Switcher
 //
-@account-switcher-header-bg:          @gray-700;
-@account-switcher-bg:                 @gray-800;
+@account-switcher-header-bg:          @black;
 @account-switcher-text:               @gray-200;
-@account-switcher-border-color:       @gray-700;
-@account-switcher-active-bg:          @gray-900;
+@account-switcher-border-color:       @black;
+@account-switcher-bg:                 @gray-500;
+@account-switcher-active-bg:          @gray-1000;
+@account-switcher-input-text:         @gray-200;
+@account-switcher-header-text:        @gray-400;
 //== Action Toolbar
 //
-@action-toolbar-bg:                   @gray-100;
-@action-toolbar-hover-bg:             @gray-600;
-@action-toolbar-active-bg:            @gray-700;
-@action-toolbar-dropdown-bg:          @gray-700;
-@action-toolbar-dropdown-hover-bg:    @gray-800;
-@action-toolbar-dropdown-active-bg:   @gray-900;
+@action-toolbar-bg:                   @gray-75;
+@action-toolbar-hover-bg:             @gray-100;
+@action-toolbar-active-bg:            @gray-150;
+@action-toolbar-dropdown-bg:          @black;
+@action-toolbar-dropdown-hover-bg:    @black;
+@action-toolbar-dropdown-active-bg:   @black;
 //== Alerts
 //
 //## Define alert colors, border radius, and padding.
@@ -266,44 +289,43 @@
 //=========================================
 //== Main Nav
 //
-@main-nav-text:               @gray-300;
-@main-nav-bg:                 @gray-800;
-@main-nav-hover-bg:           darken(@gray-800, 3%);
-@main-nav-active-bg:        @gray-900;
+@main-nav-text:               @gray-200;
+@main-nav-bg:                 @primary-body-bg;
+@main-nav-hover-bg:           @gray-50;
+@main-nav-active-bg:          @gray-75;
 @main-nav-icon-color:         @gray-400;
-@main-nav-link-text:          @gray-200;
-@main-nav-link-text-hover:    @gray-100;
-@main-nav-link-text-active:   #fff;
-@main-nav-icon-color:         @gray-500;
-@main-nav-selected-highlight: inset 3px 0 0 @primary-brand-green, 0 -1px 0 @main-nav-active-bg inset, 0 1px 0 @main-nav-active-bg inset;
-@main-nav-flyout-bg:          @gray-800;
-@main-nav-flyout-hover-bg:    darken(@gray-800, 3%);
-@main-nav-flyout-active-bg:   @gray-900;
+@main-nav-link-text:          @black;
+@main-nav-link-text-hover:    @black;
+@main-nav-link-text-active:   @black;
+@main-nav-icon-color:         @gray-200;
+@main-nav-selected-highlight: inset 3px 0 0 @primary-brand-green;
+@main-nav-flyout-bg:          @primary-body-bg;
+@main-nav-flyout-hover-bg:    @gray-50;
+@main-nav-flyout-active-bg:   @gray-75;
 @main-nav-width-sm:           46px;
 @main-nav-width-md:           100px;
 @main-nav-width-lg:           160px;
 @main-nav-flyout-width:       @pane-width; // 280px
-@main-nav-flyout-divider:     @gray-700;
+@main-nav-flyout-divider:     @gray-75;
 //=== Shared nav styles
 @nav-link-padding:                    15px;
-@nav-link-hover-bg:                   @body-bg;
-@nav-disabled-link-color:             @gray-300;
-@nav-disabled-link-hover-color:       @gray-300;
+@nav-link-hover-bg:                   @gray-75;
+@nav-disabled-link-color:             @gray-200;
+@nav-disabled-link-hover-color:       @gray-200;
 @nav-bottom-border:                   @gray-100;
 //== Navbar
 //
 // Basics of a navbar
-@navbar-height:               50px;
+@navbar-height:               64px;
 @navbar-margin-bottom:        0;
 @navbar-border-radius:        @border-radius-base;
 @navbar-padding-horizontal:   floor((@grid-gutter-width / 2));
-@navbar-padding-vertical:     ((@navbar-height - @line-height-computed) / 2);
+@navbar-padding-vertical:     ((@navbar-height - 30px) / 2);
 @navbar-collapse-max-height:  340px;
-@navbar-default-color:        #777;
-@navbar-default-bg:           #f8f8f8;
+@navbar-default-bg:           #fff;
 @navbar-default-border:       darken(@navbar-default-bg, 6.5%);
 // Navbar links
-@navbar-default-link-color:           #777;
+@navbar-default-link-color:           @link-color;
 @navbar-default-link-hover-color:     #333;
 @navbar-default-link-hover-bg:        transparent;
 @navbar-default-link-active-color:    #555;
@@ -315,41 +337,20 @@
 @navbar-default-brand-hover-color:    darken(@navbar-default-brand-color, 10%);
 @navbar-default-brand-hover-bg:       transparent;
 // Navbar toggle
-@navbar-default-toggle-hover-bg:      #ddd;
-@navbar-default-toggle-icon-bar-bg:   #888;
-@navbar-default-toggle-border-color:  #ddd;
-//=== Inverted navbar
-// Reset inverted navbar basics
-@navbar-inverse-text:                 @gray-700;
-@navbar-inverse-bg:                   @gray-800;
-@navbar-inverse-border:               @gray-900;
-// Inverted navbar links
-@navbar-inverse-link-color:           @gray-200;
-@navbar-inverse-link-hover-color:     #fff;
-@navbar-inverse-link-hover-bg:        transparent;
-@navbar-inverse-link-active-color:    @navbar-inverse-link-hover-color;
-@navbar-inverse-link-active-bg:       @gray-900;
-@navbar-inverse-link-disabled-color:  @gray-700;
-@navbar-inverse-link-disabled-bg:     transparent;
-// Inverted navbar brand label
-@navbar-inverse-brand-color:          @gray-100;
-@navbar-inverse-brand-hover-color:    #fff;
-@navbar-inverse-brand-hover-bg:       transparent;
-// Inverted navbar toggle
-@navbar-inverse-toggle-hover-bg:      @gray-700;
-@navbar-inverse-toggle-icon-bar-bg:   #fff;
-@navbar-inverse-toggle-border-color:  @gray-700;
+@navbar-default-toggle-hover-bg:      @gray-100;
+@navbar-default-toggle-icon-bar-bg:   @gray-200;
+@navbar-default-toggle-border-color:  @gray-200;
 //== Pagination
 //
 //## Define pagination colors and padding.
 @pagination-padding-x:        15px;
 @pagination-padding-y:        7px;
 @pagination-color:            @text-color;
-@pagination-bg:               #fff;
+@pagination-bg:               transparent;
 @pagination-border-width:     1px;
-@pagination-border-color:     @border-color;
+@pagination-border-color:     @gray-150;
 @pagination-hover-color:      @text-color;
-@pagination-hover-bg:         @gray-100;
+@pagination-hover-bg:         #fff;
 @pagination-hover-border:     #ddd;
 @pagination-active-color:     @text-color;
 @pagination-active-bg:        @gray-100;
@@ -360,7 +361,7 @@
 // Progress bars
 //
 @progress-bg:                 @gray-100;
-@progress-border-radius:      @border-radius-large;
+@progress-border-radius:      @border-radius-small;
 @progress-bar-success-bg:     @brand-success;
 @progress-bar-info-bg:        @brand-info;
 @progress-bar-warning-bg:     @brand-warning;
@@ -379,12 +380,12 @@
 //** Background color used for `.table-hover`.
 @table-hover-bg:              #f5f5f5;
 @table-active-bg:             @table-hover-bg;
-@table-header-bg:             @gray-100;
+@table-header-bg:             @gray-75;
 //** Border color for table and cell borders.
-@table-border-color:          @border-color;
+@table-border-color:          @gray-75;
 //== Tag Colors
 //
-@tag-default-bg:              @gray-300;
+@tag-default-bg:              @gray-200;
 @tag-primary-bg:              @brand-success;
 @tag-info-bg:                 @brand-info;
 @tag-warning-bg:              @brand-warning;
@@ -402,3 +403,11 @@
 @tree-list-status-default-bg: @gray-100;
 @tree-list-status-warning-bg: @brand-warning;
 @tree-list-status-danger-bg:  @brand-danger;
+
+@new-list-view-header-bg: 	  @gray-75;
+@list-view-item-bg: 		  @primary-body-bg;
+//== Process
+//
+@process-step-bg:							@gray-100;
+@process-step-done-bg:         @gray-400;
+@process-step-active-bg:			@bright-green;

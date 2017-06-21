@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 .action-area {
-  background-color: @action-toolbar-bg;
+  background: @action-toolbar-bg;
   height: 40px;
   line-height: 20px;
   padding: 0 20px;
@@ -13,6 +13,52 @@
   &.action-toolbar-confirm-shown {
     .overflow-menu {
       display: none;
+    }
+  }
+
+  .overflow-menu {
+    vertical-align: inherit;
+    height: 40px;
+    position: absolute;
+    display: inline-block;
+    white-space: nowrap;
+
+    &:hover,
+    &.open {
+      a,
+      button {
+        width: 100%;
+        text-align: left;
+        font-size: 13px;
+      }
+
+     .dropdown-menu {
+       li > a,
+       li > button {
+         padding: 5px 10px;
+       }
+     }
+
+      svg {
+        fill: @gray-200;
+      }
+    }
+
+    .dropdown-menu {
+      border: 0;
+      margin-top: 0;
+      border-radius: 0;
+      background: #eee;
+
+      > li {
+        a,
+        button {
+          background: transparent;
+            svg.cyclops-icon {
+              fill: @gray-200;
+            }
+        }
+      }
     }
   }
 }
@@ -31,7 +77,7 @@
 
     a,
     button {
-      background-color: @action-toolbar-bg;
+      background: transparent;
       display: inline-block;
       padding: 8px 10px 12px;
       transition: e('color .15s ease-in, padding .15s ease-in, background-color .15s ease-in');
@@ -39,22 +85,20 @@
       border:none;
       outline:none;
 
-      &:hover {
-        background-color: @action-toolbar-hover-bg;
-        color: #fff;
 
-        svg.cyclops-icon {
-          transition: e('fill .15s');
-          fill: #fff;
+      &:not(.disabled):not(:disabled) {
+        &:hover {
+         background-color: @action-toolbar-hover-bg;
+         svg.cyclops-icon {
+           fill: @black;
+         }
         }
       }
 
-      &.active,
-      &:active {
+      &:active, &.active {
         background-color: @action-toolbar-active-bg;
-        color: #fff;
         svg.cyclops-icon {
-          fill: #fff;
+          fill: @black;
         }
       }
 
@@ -62,14 +106,6 @@
       &:disabled {
         color: #b9b9b9;
         cursor: @cursor-disabled;
-
-        &:hover {
-          background: @action-toolbar-bg;
-
-          svg.cyclops-icon {
-            fill: #b9b9b9;
-          }
-        }
 
         svg.cyclops-icon {
           fill: #b9b9b9;
@@ -86,66 +122,6 @@
 
 .action-toolbar-right {
   float: right;
-}
-
-.overflow-menu {
-  vertical-align: inherit;
-  height: 40px;
-  position: absolute;
-  display: inline-block;
-  white-space: nowrap;
-
-  &:hover,
-  &.open {
-    color: #fff;
-    background: @action-toolbar-dropdown-bg;
-
-    a,
-    button {
-      color: #fff;
-      background-color: @action-toolbar-dropdown-bg;
-      width: 100%;
-      text-align: left;
-      font-size: 13px;
-    }
-
-   .dropdown-menu {
-     li > a,
-     li > button {
-       padding: 5px 10px;
-     }
-   }
-
-    svg {
-      fill: #fff;
-    }
-  }
-
-  .dropdown-menu {
-    color: #fff;
-    background: @action-toolbar-dropdown-bg;
-    border: 0;
-    margin-top: 0;
-    border-radius: 0;
-
-    li a,
-    li button {
-      transition: none;
-
-      &:hover {
-        background: @action-toolbar-dropdown-hover-bg;
-
-        &.disabled,
-        &:disabled {
-          background: none;
-        }
-        &.active,
-        &:active {
-          background-color: @action-toolbar-dropdown-active-bg;
-        }
-      }
-    }
-  }
 }
 
 .action-toolbar-confirm {
@@ -191,7 +167,7 @@
         background-color: @btn-default-bg;
 
         &:hover {
-          background-color: @btn-default-bg-hover;
+          background-color: darken(@btn-default-bg, @btn-hover-darken-percentage);
         }
       }
 
@@ -235,7 +211,7 @@
         background-color: @btn-primary-bg;
 
         &:hover {
-          background-color: @btn-primary-bg-hover;
+          background-color: darken(@btn-primary-bg, @btn-hover-darken-percentage);
         }
       }
     }
@@ -247,7 +223,7 @@
         background-color: @btn-danger-bg;
 
         &:hover {
-          background-color: @btn-danger-bg-hover;
+          background-color: darken(@btn-danger-bg, @btn-hover-darken-percentage);
         }
       }
     }

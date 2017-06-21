@@ -8,6 +8,15 @@ body {
   margin: 0;
 }
 
+.nav-column {
+  @media (min-width: @grid-float-breakpoint) {
+    position: sticky;
+    top: 20px;
+    overflow-y: auto;
+    height: 90vh;
+  }
+}
+
 .main-column {
   margin-bottom: 100px;
 }

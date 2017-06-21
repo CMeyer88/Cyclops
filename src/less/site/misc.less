@@ -39,7 +39,6 @@
 
   h1 {
     letter-spacing: 15px;
-    font-weight: @font-weight-bold;
   }
 
   .lead {
@@ -60,7 +59,7 @@
 }
 
 .primary-container {
-  background-color: @body-bg;
+  background-color: #fff;
   border-radius: @border-radius-large;
   padding: 20px;
 }
@@ -112,10 +111,6 @@
     content: 'Example';
   }
 
-  .card {
-    max-width: 300px;
-  }
-
   >.btn {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -158,4 +153,16 @@
   &:hover {
     background-color: #fff;
   }
+}
+
+.table-responsive {
+  border: 1px solid @gray-100;
+
+  @media (min-width: @screen-md) {
+    border: none;
+  }
+}
+
+.show-box {
+  background-color: #fff;
 }

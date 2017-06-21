@@ -1,7 +1,6 @@
-// Variables
-@ease: cubic-bezier(0.77, 0, 0.175, 1);
-@duration: 0.4s;
-
+//
+// Action Toolbar
+// --------------------------------------------------
 
 .account-switcher-open {
   overflow: hidden;
@@ -20,11 +19,11 @@ account-switcher {
   display: block;
   height: 40px;
   background-color: @account-switcher-bg;
-  z-index: 1051;
+  z-index: @zindex-account-switcher;
   position: relative;
 
   button.btn-link {
-    color: gray;
+    color: @gray-400;
     font-size: @font-size-small;
     text-decoration: none;
     padding-left: 0;
@@ -47,23 +46,23 @@ account-switcher {
 
   .header {
     display: block;
-    z-index: 1051;
+    z-index: @zindex-account-switcher;
     height: 40px;
     background-color: @account-switcher-header-bg;
     color: @account-switcher-text;
     font-weight: @font-weight-regular;
     height: 40px;
     padding: 5px 10px;
-    z-index: 1051;
+    z-index: @zindex-account-switcher;
     position: relative;
-    box-shadow: 0 -2px 3px 1px #000;
+    box-shadow: -1px 1px @black;
 
     .toggle-btn {
       padding: 0;
 
       .cyclops-icon use {
         transition: e('fill .05s ease-in');
-        fill: @gray-300;
+        fill: @gray-200;
       }
 
       &:hover {
@@ -74,7 +73,7 @@ account-switcher {
     }
 
     .current {
-      color: @account-switcher-text;
+      color: @gray-200;
       font-weight: @font-weight-regular;
       display: inline-block;
       max-width: 200px;
@@ -99,12 +98,13 @@ account-switcher {
     right: 0;
     bottom: 100%;
     left: 0;
-    z-index: 1050;
+    z-index: @zindex-account-takeover;
     outline: 0;
     color: @account-switcher-text;
     padding: 20px;
 
     .org-message {
+      color:   @gray-150;
       display: inline-block;
       padding: 4px 0 6px;
     }
@@ -117,7 +117,7 @@ account-switcher {
           width: 100%;
           font-size: 16px;
           background: @account-switcher-bg;
-          border-color: @account-switcher-border-color;
+          border-color: @gray-400;
           color: @gray-200;
 
           &::-ms-clear {
@@ -128,21 +128,22 @@ account-switcher {
     }
 
     .new-list-view-header {
+      border-top: none;
       clear: both;
       background-color: transparent;
       border-bottom: 2px solid @account-switcher-border-color;
 
       h3 {
-        color: @gray-400;
+        color: @account-switcher-header-text;
       }
     }
 
     .col-alias {
-      width: 100px;
+      width: 105px;
     }
 
     .col-dc {
-      width: 125px;
+      width: 150px;
       display: none;
     }
 
@@ -169,14 +170,17 @@ account-switcher {
       -webkit-overflow-scrolling: touch;
 
       .loading-list-view-items {
+        background: @account-switcher-bg;
         border-bottom-color: @account-switcher-border-color;
-        color: @gray-300;
+        color: @gray-200;
       }
 
       .list-view-item {
-        border-bottom-color: @account-switcher-border-color;
+        border-bottom-color: @black;
         transition: e('color .05s ease-in');
         cursor: pointer;
+        color:      @gray-150;
+        background: @account-switcher-bg;
 
         &.current {
           background-color: @account-switcher-active-bg;
@@ -189,6 +193,11 @@ account-switcher {
 
           .col-active-item svg {
             opacity: 1;
+          }
+
+          &:hover {
+            background-color: @account-switcher-active-bg;
+            color: #fff;
           }
         }
 

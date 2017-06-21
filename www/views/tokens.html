@@ -178,9 +178,36 @@
         </td>
       </tr>
       <tr>
+        <td><code>@account-switcher-text</code></td>
+        <td>
+          <div class="token-example-font" style="color: #c1c1c1">The quick brown fox</div>
+          <code>#c1c1c1<br />
+            rgb(193,193,193)
+          </code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>@account-switcher-input-text</code></td>
+        <td>
+          <div class="token-example-font" style="color: #c1c1c1">The quick brown fox</div>
+          <code>#c1c1c1<br />
+            rgb(193,193,193)
+          </code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>@account-switcher-header-text</code></td>
+        <td>
+          <div class="token-example-font" style="color: #848484">The quick brown fox</div>
+          <code>#848484<br />
+            rgb(132,132,132)
+          </code>
+        </td>
+      </tr>
+      <tr>
         <td><code>@main-nav-link-text</code></td>
         <td>
-          <div class="token-example-font token-example-font--inverse" style="color: #c1c1c1">The quick brown fox</div>
+          <div class="token-example-font" style="color: #c1c1c1">The quick brown fox</div>
           <code>#c1c1c1<br />
             rgb(193,193,193)
           </code>
@@ -189,7 +216,7 @@
       <tr>
         <td><code>@main-nav-link-text-hover</code></td>
         <td>
-          <div class="token-example-font token-example-font--inverse" style="color: #e0e0e0">The quick brown fox</div>
+          <div class="token-example-font" style="color: #e0e0e0">The quick brown fox</div>
           <code>#e0e0e0<br />
             rgb(224,224,224)
           </code>
@@ -198,34 +225,7 @@
       <tr>
         <td><code>@main-nav-link-text-active</code></td>
         <td>
-          <div class="token-example-font token-example-font--inverse" style="color: #fff">The quick brown fox</div>
-          <code>#fff<br />
-            rgb(255,255,255)
-          </code>
-        </td>
-      </tr>
-      <tr>
-        <td><code>@navbar-inverse-text</code></td>
-        <td>
-          <div class="token-example-font token-example-font--inverse" style="#3d3d3d">The quick brown fox</div>
-          <code>#3d3d3d<br />
-            rgb(61,61,61)
-          </code>
-        </td>
-      </tr>
-      <tr>
-        <td><code>@navbar-inverse-link-color</code></td>
-        <td>
-          <div class="token-example-font token-example-font--inverse" style="color: #c1c1c1">The quick brown fox</div>
-          <code>#c1c1c1<br />
-            rgb(193,193,193)
-          </code>
-        </td>
-      </tr>
-      <tr>
-        <td><code>@navbar-inverse-link-hover-color</code></td>
-        <td>
-          <div class="token-example-font token-example-font--inverse" style="color: #fff">The quick brown fox</div>
+          <div class="token-example-font" style="color: #fff">The quick brown fox</div>
           <code>#fff<br />
             rgb(255,255,255)
           </code>
@@ -558,16 +558,6 @@
         </td>
       </tr>
       <tr>
-        <td><code>@navbar-inverse-bg</code></td>
-        <td>
-          <div class="token-color-box token-color-box--bg" style="background-color:#282828;" title="#282828, rgb(40,40,40)"></div>
-          <code>
-            #282828<br />
-            rgb(40,40,40)
-          </code>
-        </td>
-      </tr>
-      <tr>
         <td><code>@progress-bg</code></td>
         <td>
           <div class="token-color-box token-color-box--bg" style="background-color:#e0e0e0;" title="#e0e0e0, rgb(224, 224, 224)"></div>
@@ -701,6 +691,58 @@
   </table>
 </section>
 
+<section class="pl-section" id="borderRadius">
+  <h3>Border Width</h3>
+  <p>Use these border width tokens for setting border widths.</p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>token</th>
+        <th class="token-value">value/example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>@border-width-0</code></td>
+        <td>
+          <div class="p-xs m-b-xs b-all b-width-0 show-box"><code>b-width-0</code></div>
+          <code>
+            0
+          </code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>@border-width-1</code></td>
+        <td>
+          <div class="p-xs m-b-xs b-all b-width-1 show-box"><code>b-width-0</code></div>
+          <code>
+            1px
+          </code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>@border-width-2</code></td>
+        <td>
+          <div class="p-xs m-b-xs b-all b-width-2 show-box"><code>b-width-0</code></div>
+          <code>
+            2px
+          </code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>@border-width-3</code></td>
+        <td>
+          <div class="p-xs m-b-xs b-all b-width-3 show-box"><code>b-width-0</code></div>
+          <code>
+            3px
+          </code>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
 <section class="pl-section" id="borderColor">
   <h3>Border Color</h3>
   <p>Use these border color tokens for setting border colors.</p>
@@ -730,16 +772,6 @@
           <code>
             #c1c1c1<br />
             rgb(193,193,193)
-          </code>
-        </td>
-      </tr>
-      <tr>
-        <td><code>@navbar-inverse-border</code></td>
-        <td>
-          <div class="token-color-box token-color-box--border" style="border-color:#141414;" title="#141414, rgb(20,20,20)"></div>
-          <code>
-            #141414<br />
-            rgb(20,20,20)
           </code>
         </td>
       </tr>
@@ -780,16 +812,6 @@
           <code>
             #ebccd1<br />
             rgb(235,204,209)
-          </code>
-        </td>
-      </tr>
-      <tr>
-        <td><code>@navbar-inverse-border</code></td>
-        <td>
-          <div class="token-color-box token-color-box--border" style="border-color:#141414;" title="#141414, rgb(20,20,20)"></div>
-          <code>
-            #141414<br />
-            rgb(20,20,20)
           </code>
         </td>
       </tr>

@@ -60,9 +60,9 @@ class MainNavMenuItem
 
     @rawFlayoutItems = ko.asObservableArray(options.items)
 
-    @fluyoutItems = ko.observableArray([])
+    @flyoutItems = ko.observableArray([])
     ko.computed () =>
-      @fluyoutItems @rawFlayoutItems().map (f) -> new MainNavFlyoutItem(f)
+      @flyoutItems @rawFlayoutItems().map (f) -> new MainNavFlyoutItem(f)
 
 
 
@@ -88,14 +88,20 @@ class MainNavViewModel
     # make main-nav sticky
     $mainNav = $(element)
     $window = $(window)
-    mainNavOriginalTopPosition = $mainNav.position().top
-    calculateMainNavPosition = () ->
-      newTopPosition = mainNavOriginalTopPosition - $window.scrollTop()
+    $accountSwitcher = $('account-switcher')
+    $navbar = $('brand-bar, nav.navbar')
+
+    calculateMainNavPosition = () =>
+      originalTopPosition = 0
+      originalTopPosition += 40 if $accountSwitcher.length > 0
+      originalTopPosition += 65 if $navbar.length > 0
+      newTopPosition = originalTopPosition - $window.scrollTop()
       if newTopPosition < 0
         newTopPosition = 0
       $mainNav.css('top': newTopPosition)
     calculateMainNavPosition()
     $window.on 'scroll', calculateMainNavPosition
+    $window.on 'resize', calculateMainNavPosition
 
     # Set up Scrolling of many menu Items
     @updateMainMenuScrollIcons = () ->
@@ -159,7 +165,7 @@ class MainNavViewModel
           m.isSelected(true)
         else
           m.isSelected(false)
-          m.fluyoutItems().forEach (f) =>
+          m.flyoutItems().forEach (f) =>
             if f.id == itemId
               m.isSelected true
               f.isSelected true
@@ -171,11 +177,13 @@ class MainNavViewModel
     selectAnItem @SelectedItemId()
 
     @selectFlyout = (menu) =>
+
       previousState = menu.isFlyoutOpen()
       @menus().forEach (m) -> m.isFlyoutOpen false
       if(!previousState)
         menu.isFlyoutOpen !previousState
-
+      $(".main-nav-flyout-menu.open .main-nav-flyout-menu-items li:first-child a").focus()
+      return
 
     # Auto Close any Flyouts when the user hovers out or clicks outside the mainNav
     $('body > *').not('main-nav').on 'click', () =>

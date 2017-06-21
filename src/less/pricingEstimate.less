@@ -10,6 +10,7 @@
   font-weight: @font-weight-regular;
   overflow: auto;
   padding-top: 15px;
+  z-index: @zindex-sticky-content;
 
   #priceEstimate {
     background-color: #fff;
@@ -23,7 +24,7 @@
     letter-spacing: 1;
   }
   .cost-interval {
-    color: @gray-300;
+    color: @gray-200;
     font-size: @font-size-regular - 1;
   }
   .cost-interval + .cost-value {
@@ -38,7 +39,7 @@
     font-size: @font-size-small;
     line-height: @line-height-computed - 2;
     margin-top: @padding-base-vertical * 2;
-    color: @gray-300;
+    color: @gray-200;
   }
 
   #priceBreakdown {
@@ -52,9 +53,10 @@
     margin-bottom: 20px;
 
     .line-item-cost {
-      color: @gray-300;
+      color: @gray-200;
     }
   }
+
 }
 
 #createFormContainer {
@@ -79,16 +81,15 @@
 @media (min-width: @screen-sm) {
 
   #priceEstimateContainer {
-    box-shadow: 7px 0 7px -7px rgba(0, 0, 0, 0.2);
-
+    border-right: 1px solid @gray-100;
+    position: sticky;
+    top: 0;
 
     .cost-value {
       font-size: 30px;
       margin-bottom: 7px;
     }
-
   }
-
 }
 
 // hide cost break down on small screens

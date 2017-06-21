@@ -1,9 +1,7 @@
   <footer>
     <p class="text-center">
       <a href="https://github.com/CenturyLinkCloud/Cyclops/tree/v{{version}}">version {{version}}</a> &mdash; Designed and Developed with &hearts; by
-      <a href="mailto:matthew.osborn@ctl.io">Matthew Osborn</a>,
-      <a href="mailto:nathan.young@ctl.io">Nathan Young</a>, &amp;
-      <a href="mailto:Rathromony.Ros@ctl.io">Rathromony Ros</a>
+      The <a href="https://www.ctl.io">CenturyLink Cloud</a> UI/UX Team
     </p>
   </footer>
 
@@ -24,7 +22,7 @@
       var offset = 250, // At what pixels show Back to Top Button
       scrollDuration = 300; // Duration of scrolling to top
 
-      $(window).scroll(function() {
+      $(window).on('scroll', function() {
         if ($(this).scrollTop() > offset) {
           $('.top-anchor').fadeIn(500); // Time(in Milliseconds) of appearing of the Button when scrolling down.
         } else {
@@ -33,7 +31,7 @@
       });
 
       // Smooth animation when scrolling
-      $('.top-anchor').click(function(event) {
+      $('.top-anchor').on('click', function(event) {
         event.preventDefault();
         $('html, body').animate({scrollTop: 0}, scrollDuration);
       })

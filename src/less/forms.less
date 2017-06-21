@@ -45,6 +45,8 @@ input[type="radio"],
 input[type="checkbox"] {
   margin: 4px 0 0;
   line-height: normal;
+  border: 1px solid @gray-150;
+  background-color: #fff;
 }
 
 input[type="file"] {
@@ -71,9 +73,10 @@ select[size] {
   color: @text-color;
   background-color: #fff;
   background-image: none;
-  border: 1px solid @gray-200;
+  border: 1px solid @gray-150;
   border-radius: @border-radius-base;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  vertical-align: bottom;
   // Disabled and read-only inputs
   //
   // HTML5 says that controls under a fieldset > legend:first-child won't be
@@ -89,6 +92,11 @@ select[size] {
     cursor: @cursor-disabled;
   }
 
+  &:focus {
+    border-color: #89AED2;
+    box-shadow: 0 0 4px 1px rgba(137, 174, 210, 0.3);
+  }
+
 }
 // Reset height for `textarea`s to use specified rows
 textarea.form-control {
@@ -100,6 +108,13 @@ textarea.form-control {
 // horizontal forms, use the predefined grid classes.
 .form-group {
   margin-bottom: @form-group-margin-bottom;
+
+  @media (min-width: @screen-sm-min) {
+    input + p,
+    textarea + p {
+      padding-top: @padding-base-vertical;
+    }
+  }
 }
 // Checkboxes and radios
 //
@@ -219,6 +234,7 @@ fieldset[disabled] {
 }
 
 .validationMessage {
+  font-size: @font-size-small;
   color: @text-color-error;
   margin: 0;
 }
@@ -236,6 +252,10 @@ fieldset[disabled] {
       display: inline-block;
       margin-bottom: 0;
       vertical-align: middle;
+
+      &.hide {
+        display: none;
+      }
     }
   }
 
@@ -299,16 +319,9 @@ fieldset[disabled] {
   // Make form groups behave like rows
   .form-group {
     .make-row();
-
-    @media (min-width: @screen-sm-min) {
-      input + p {
-        padding-top: @padding-base-vertical;
-      }
-    }
   }
 
   .form-submit {
-    border-top: 1px solid @border-color;
     margin-top: 30px;
     padding-top: 15px;
   }
@@ -357,7 +370,7 @@ fieldset[disabled] {
   display: block; // account for any element using help-block
   margin-top: 5px;
   margin-bottom: 10px;
-  color: @gray-300; // lighten the text some for contrast
+  color: @gray-200; // lighten the text some for contrast
 }
 
 // For when multiple inputs need to be adjacent together within a column

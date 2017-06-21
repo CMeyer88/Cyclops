@@ -116,16 +116,48 @@
   </pre>
 </section>
 
-<section class="pl-section" id="hierarchyPicker">
-  <h3><a href="#hierarchyPicker">Hierarchy Picker</a></h3>
+<section class="pl-section" id="copyInput">
+  <h3><a href="#copyInput">Copy Input to Clipboard Button</a></h3>
+  <p>The copy input to clipboard button component allows users to copy a the value a form input with the press of a button. This component can be useful to allow users to copy things such as keys, ids, or passwords.</p>
+  <p>See the <a href="buttons.html#copy">copy to clipboard button</a> and <a href="./widgets.html#copyable">widget binding</a>.
+  <div class="pl-example">
+    <input type="text" disabled class="form-control copyable" value="123456" style="width:160px">
+
+{{#contentFor "scripts"}}
+<script>
+  $(function(){
+    $(".copyable").copyable();
+  })
+</script>
+{{/contentFor}}
+
+  </div>
+
+  <pre class="show-type">
+    <code class="javascript">
+$(&quot;#copyBtn&quot;).copyable();
+    </code>
+    <code class="html">
+&lt;button id=&quot;copyBtn&quot; class=&quot;btn btn-default&quot; value=&quot;value to copy&quot;&gt;Copy me!&lt;/button&gt;
+    </code>
+  </pre>
+</section>
+
+
+
+{{> forms/custom-picker }}
+
+
+<section class="pl-seciton" id="hierarchyPicker">
+  <h3><a href="#hiearchyPickers">Hierarchy Pickers</a></h3>
   <p>When it is important to display the hierarchy of a collection (e.g. servers, groups, or organizations/accounts) in the selection process, use a hierarchy picker.</p>
 
-  <h4>Single-Select Picker</h4>
+  <h4 id="#hierarchySinglePicker"><a href="#hierarchySinglePicker">Single-Select Hierarchy Picker</a></h4>
   <p>
     If you want to allow the user to only pick one item use radio buttons.
   </p>
   <div class="pl-example">
-    {{> forms/examples/input-picker-single }}
+    {{> forms/examples/input-hierarchy-picker-single }}
   </div>
   <pre>
     <code class="html">
@@ -162,17 +194,15 @@
     </code>
   </pre>
 
-
-
-    <h4>Multi-Select Picker</h4>
-    <p>
-      If you want to allow the user pick many items use checkboxes.
-    </p>
-    <div class="pl-example">
-      {{> forms/examples/input-picker-multi }}
-    </div>
-    <pre>
-      <code class="html">
+  <h4 id="#hierarchyMultiPicker"><a href="#hierarchyMultiPicker">Multi-Select Hierarchy Picker</a></h4>
+  <p>
+    If you want to allow the user pick many items use checkboxes.
+  </p>
+  <div class="pl-example">
+    {{> forms/examples/input-hierarchy-picker-multi }}
+  </div>
+  <pre>
+    <code class="html">
 &lt;div class=&quot;picker&quot;&gt;
   &lt;ol&gt;
     &lt;li&gt;
@@ -236,12 +266,14 @@
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;
-      </code>
-    </pre>
+    </code>
+  </pre>
+
 </section>
 
-<section class="pl-section">
-  <h3 id="stackedInputs"><a href="#stackedInputs">One Label with Stacked Inputs</a></h3>
+
+<section class="pl-section" id="stackedInputs">
+  <h3><a href="#stackedInputs">One Label with Stacked Inputs</a></h3>
   <p>By default, inputs will automatically stack when placed in a single column.</p>
   <div class="pl-example">
     {{> forms/examples/input-stacked-inputs }}
@@ -267,8 +299,10 @@
 &lt;/form&gt;
     </code>
   </pre>
+</section>
 
-  <h3 id="adjacentInputs"><a href="#adjacentInputs">One Label with Adjacent Inputs</a></h3>
+<section class="pl-section" id="adjacentInputs">
+  <h3><a href="#adjacentInputs">One Label with Adjacent Inputs</a></h3>
   <p>When it is more appropriate to adjacently align inputs within a <code>.col-*</code>, add a <code>.w*</code> to the <code>.form-control</code> set the width based on a percentage of the parent. Widths are avaialbe in increments of 10, starting at 10%.</p>
   <div class="pl-example">
     {{> forms/examples/input-adjacent-inputs }}
@@ -278,12 +312,21 @@
 &lt;form class=&quot;form-horizontal&quot;&gt;
   &lt;fieldset&gt;
     &lt;div class=&quot;form-group&quot;&gt;
-      &lt;label class=&quot;col-sm-3 control-label&quot;&gt;nodes&lt;/label&gt;
-      &lt;div class=&quot;col-sm-6&quot;&gt;
-        &lt;input type=&quot;text&quot; class=&quot;form-control w70&quot; placeholder=&quot;ip address&quot;&gt;
-        &lt;input type=&quot;text&quot; class=&quot;form-control w30&quot; placeholder=&quot;port&quot;&gt;
-        ...
-        &lt;button class=&quot;btn btn-mini btn-default m-t-xs&quot;&gt;add node&lt;/button&gt;
+      &lt;label class=&quot;col-md-3 control-label&quot;&gt;nodes&lt;/label&gt;
+      &lt;div class=&quot;col-md-9 col-sm-12&quot;&gt;
+        &lt;ul class=&quot;list-unstyled&quot;&gt;
+          &lt;li class=&quot;m-b-xs&quot;&gt;
+            &lt;label class=&quot;sr-only&quot; for=&quot;inputTextAdjacentNode1&quot;&gt;node 1&lt;/label&gt;
+            &lt;toggle class=&quot;d-inline-block m-r-xxs&quot;&gt;&lt;/toggle&gt;
+            &lt;input type=&quot;text&quot; id=&quot;inputTextAdjacentNode1&quot; class=&quot;form-control w40&quot; placeholder=&quot;ip address&quot;&gt;
+            &lt;label class=&quot;sr-only&quot; for=&quot;inputTextAdjacentPort1&quot;&gt;node port 1&lt;/label&gt;
+            &lt;input type=&quot;text&quot; id=&quot;inputTextAdjacentPort1&quot; class=&quot;form-control w20 m-t-0&quot; placeholder=&quot;port&quot;&gt;
+            &lt;div class=&quot;w10&quot;&gt;
+              &lt;button class=&quot;btn btn-default btn-icon&quot;&gt;&lt;svg class=&quot;cyclops-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use xlink:href='#icon-times' /&gt;&lt;/svg&gt;&lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/li&gt;
+          ...
+        &lt;/ul&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   &lt;/fieldset&gt;
